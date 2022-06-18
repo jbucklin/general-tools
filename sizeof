@@ -1,0 +1,11 @@
+#!/bin/bash
+# Supresses all the annoying "Permission denied" errors when trying
+# to get the size of a directory
+if [ "$#" -eq 1 ]; then
+    du -sh "${1}" 2>&1 | grep -iv 'Permission denied'
+else
+    files=$(\dir -1) 
+    for f in $files; do
+        du -sh "${f}" 2>&1 | grep -iv 'Permission denied'
+    done
+fi

@@ -1,0 +1,15 @@
+#!/bin/bash
+# Usage: fstr <str>
+# Recursively searches all files starting at the current directory
+# for str.
+
+find ./ -type f 2>/dev/null | while read f; do
+    if [[ $(grep $1 $f) != "" ]]; then
+        if [ $? -ne 0 ]; then echo 'Permission denied in file ${f}'; fi
+        echo "In file ${f}:"
+        grep -in $1 $f
+        echo '-------------------------------------------------------------'
+        echo ''    
+    fi
+done
+

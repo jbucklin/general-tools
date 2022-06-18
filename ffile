@@ -1,0 +1,2 @@
+#!/bin/bash
+find ./ -iname "${1}" 2>&1 | grep -v "Permission denied"
