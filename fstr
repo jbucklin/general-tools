@@ -1,15 +1,54 @@
 #!/bin/bash
-# Usage: fstr <str>
-# Recursively searches all files starting at the current directory
-# for str.
 
-find ./ -type f 2>/dev/null | while read f; do
-    if [[ $(grep $1 $f) != "" ]]; then
-        if [ $? -ne 0 ]; then echo 'Permission denied in file ${f}'; fi
-        echo "In file ${f}:"
-        grep -in $1 $f
-        echo '-------------------------------------------------------------'
-        echo ''    
-    fi
+printhelp(){
+echo    "Simple script for recursively searching files in a directory for <str>. Defaults to"
+echo    "current directory. Case insensitive."
+echo    ""
+echo    "Usage: fstr [OPTIONS] [-s <starting-dir>] <str>"
+echo    ""
+echo    "OPTIONS:"
+echo    "   -a  : searches the whole filesystem (can be slow)"
+echo    "   -h  : print this help text"
+echo    "   -s  : define the directory to search in. If -s is set, -a is ignored."
+echo    ""
+}
+
+# Defaults 
+START_DIR='./'
+
+# Options processing
+while getopts ":adhs:" OPTION; do
+    case $OPTION in
+        a) # search the whole filesystem
+            START_DIR='/'
+            ;;
+        h) # help
+            printhelp
+            exit
+            ;;
+        s) # set the start directory explicitly
+            START_DIR=$OPTARG
+            ;;
+        \?) # invalid opts
+            echo "Invalid option. See fstr -h"
+            exit
+            ;;
+    esac
+done
+
+# Get the argument after the options
+shift $(($OPTIND - 1))
+SEARCH_FOR=$1
+
+# Do the search
+grep -D skip -rn "${SEARCH_FOR}" $START_DIR 2>/dev/null | while read MATCHES; do
+    FILE=$(echo $MATCHES | cut -d':' -f1)
+    LINENUM=$(echo $MATCHES | cut -d':' -f2)
+    MATCH=$(echo $MATCHES | cut -d':' -f3)
+    
+    echo "${FILE} ------------------------------------------"
+    echo ""
+    echo "${LINENUM}:   ${MATCH}"
+    echo ""
 done
 

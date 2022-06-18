@@ -1,2 +1,51 @@
 #!/bin/bash
-find ./ -iname "${1}" 2>&1 | grep -v "Permission denied"
+
+printhelp(){
+echo    "Simple script for recursively searching a directory for <file> or <dir>."
+echo    "Defaults to current directory. Case insensitive."
+echo    "HINT: use * as a wild card"
+echo    ""
+echo    "Usage: ffile [OPTIONS] [-s <starting-dir>] <file | dir>"
+echo    ""
+echo    "OPTIONS:"
+echo    "   -a  : searches the whole filesystem (can be slow)"
+echo    "   -d  : searches for a directory instead of a file name"
+echo    "   -h  : print this help text"
+echo    "   -s  : define the directory to search in. If -s is set, -a is ignored."
+echo    ""
+}
+
+# Defaults 
+START_DIR='./'
+SEARCH_TYPE='f'
+
+# Options processing
+while getopts ":adhs:" OPTION; do
+    case $OPTION in
+        a) # search the whole filesystem
+            START_DIR='/'
+            ;;
+        d) # search for a directory instead of a file
+            SEARCH_TYPE='d' 
+            ;;
+        h) # help
+            printhelp
+            exit
+            ;;
+        s) # set the start directory explicitly
+            START_DIR=$OPTARG
+            ;;
+        \?) # invalid opts
+            echo "Invalid option. See ffile -h"
+            exit
+            ;;
+    esac
+done
+
+# Get the argument after the options
+shift $(($OPTIND - 1))
+SEARCH_FOR=$1
+
+# Do the search
+find $START_DIR -type $SEARCH_TYPE -iname $SEARCH_FOR 2>/dev/null
+
