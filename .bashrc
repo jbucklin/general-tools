@@ -9,6 +9,11 @@ if [ -f ~/.bash_aliases ]; then
     source ~/.bash_aliases
 fi
 
+# Git completion (this is really nice!)
+if [ -f ~/.git-completion.bash ]; then
+    source ~/.git-completion.bash
+fi
+
 # For creating a new template file
 newfile()
 {
