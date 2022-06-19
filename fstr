@@ -60,7 +60,7 @@ SEARCH_FOR=$1
 LAST_FILE=''
 
 # Do the search
-grep -D skip -rn "${SEARCH_FOR}" $START_DIR 2>/dev/null | while read MATCHES; do
+grep -D skip -irn "${SEARCH_FOR}" $START_DIR 2>/dev/null | while read MATCHES; do
     FILE=$(echo $MATCHES | cut -d':' -f1)
     LINENUM=$(echo $MATCHES | cut -d':' -f2)
     MATCH=$(echo $MATCHES | cut -d':' -f3)
