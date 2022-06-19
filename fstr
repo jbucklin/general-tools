@@ -3,21 +3,25 @@
 printhelp(){
 echo    "Simple script for recursively searching files in a directory for <str>. Defaults to"
 echo    "current directory. Case insensitive."
+echo    "If the results are long or you want to share them, you can output to a file with the -o option."
 echo    ""
-echo    "Usage: fstr [OPTIONS] [-s <starting-dir>] <str>"
+echo    "Usage: fstr [OPTIONS] [-s <starting-dir>] [-o <output_file>] <str>"
 echo    ""
 echo    "OPTIONS:"
 echo    "   -a  : searches the whole filesystem (can be slow)"
 echo    "   -h  : print this help text"
+echo    "   -o  : output the results to <output_file>"
 echo    "   -s  : define the directory to search in. If -s is set, -a is ignored."
 echo    ""
 }
 
 # Defaults 
 START_DIR='./'
+OUTPUT_FILE=''
+OUTPUT=''
 
 # Options processing
-while getopts ":adhs:" OPTION; do
+while getopts ":adho:s:" OPTION; do
     case $OPTION in
         a) # search the whole filesystem
             START_DIR='/'
@@ -25,6 +29,18 @@ while getopts ":adhs:" OPTION; do
         h) # help
             printhelp
             exit
+            ;;
+        o) # output results to a file
+            OUTPUT_FILE=$OPTARG
+            if [[ -f $OUTPUT_FILE ]]; then
+                printf "${OUTPUT_FILE} already exists - overwrite? (y/n): "
+                read OVERWRITE
+                if [[ $OVERWRITE != "y" ]]; then
+                    echo "Cancelling."
+                    exit
+                fi
+                echo '' > $OUTPUT_FILE
+            fi
             ;;
         s) # set the start directory explicitly
             START_DIR=$OPTARG
@@ -40,15 +56,27 @@ done
 shift $(($OPTIND - 1))
 SEARCH_FOR=$1
 
+# This is necessary to group matches in a similar file together
+LAST_FILE=''
+
 # Do the search
 grep -D skip -rn "${SEARCH_FOR}" $START_DIR 2>/dev/null | while read MATCHES; do
     FILE=$(echo $MATCHES | cut -d':' -f1)
     LINENUM=$(echo $MATCHES | cut -d':' -f2)
     MATCH=$(echo $MATCHES | cut -d':' -f3)
     
-    echo "${FILE} ------------------------------------------"
-    echo ""
-    echo "${LINENUM}:   ${MATCH}"
-    echo ""
+    if [[ $FILE != $LAST_FILE ]]; then
+        OUTPUT="\n${FILE} ------------------------------------------\n\n"
+    fi
+    OUTPUT+="${LINENUM}: ${MATCH}"
+
+    if [[ $OUTPUT_FILE != "" ]]; then
+        echo -e $OUTPUT >> $OUTPUT_FILE
+    else 
+        echo -e $OUTPUT
+    fi
+
+    LAST_FILE=$FILE
+    OUTPUT=''
 done
 
