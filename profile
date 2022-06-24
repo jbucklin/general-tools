@@ -57,7 +57,7 @@ ENDCLR='\[\e[m\]'
 if [ $(id -u) -eq 0 ]; then # Logged in as root
     PS1="[${RED}\u${ENDCLR}@${RED}\h${ENDCLR}: ${CYAN}\w${ENDCLR}]${RED}#${ENDCLR} "
 else
-    PS1="[${GREEN}\u${ENDCLR}@${GREEN}\h${ENDCLR}: ${CYAN}\w${ENDLR}]${GREEN}\$${ENDCLR} "
+    PS1="[${GREEN}\u${ENDCLR}@${GREEN}\h${ENDCLR}: ${CYAN}\w${ENDCLR}]${GREEN}\$${ENDCLR} "
 fi
 export PS1
 unset RED

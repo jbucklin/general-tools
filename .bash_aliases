@@ -8,3 +8,5 @@ alias rdb='source ~/kde/build/network/kdeconnect-kde/prefix.sh && ~/kde/usr/bin/
 alias bar='bdr && rdb'
 #alias testd='source ~/kde/build/system/dolphin/prefix.sh && gdb ~/kde/usr/bin/dolphin'
 alias ag='ag --silent'
+alias info='info --vi-keys'
+alias lsblk='lsblk -o name,fstype,size,fssize,fsused,fsuse%,label,mountpoints'
