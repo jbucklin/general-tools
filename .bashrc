@@ -15,6 +15,7 @@ if [ -f ~/.git-completion.bash ]; then
 fi
 
 # For creating a new template file
+# $1 : the filename to create
 newfile()
 {
     touch $1
@@ -23,6 +24,25 @@ newfile()
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */\n" > $1
+}
+
+# On login, give a reminder to clean the pacman cache
+# if it has exceeded 30G
+if [[ $(du -sht 30G /var/cache/pacman) != "" ]]; then
+    echo "Pacman cache is at $(sizeof /var/cache/pacman | cut -d'/' -f1 | tr -d '\t'). Consider running pacclean."
+fi
+
+# Cleans the pacman cache, keeping only the 2 most recent
+# package versions.
+pacclean()
+{
+    echo "WARNING: cleaning pacman cache. Only retaining past two versions of each package."
+    printf "Continue? (y/N): "
+    read CONFIRM
+    if [[ $CONFIRM == "y" ]]; then
+        sudo paccache -rk2
+        echo "Pacman cache cleaning complete."
+    fi
 }
 
 ############################ kdesrc-build ########################################
