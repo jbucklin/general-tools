@@ -2,3 +2,5 @@ chkport
 mock
 wg-swap-servs
 xflr5
+nvidia-patch/
+.gitmodules

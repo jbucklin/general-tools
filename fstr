@@ -63,7 +63,7 @@ LAST_FILE=''
 grep -D skip -irn "${SEARCH_FOR}" $START_DIR 2>/dev/null | while read MATCHES; do
     FILE=$(echo $MATCHES | cut -d':' -f1)
     LINENUM=$(echo $MATCHES | cut -d':' -f2)
-    MATCH=$(echo $MATCHES | cut -d':' -f3)
+    MATCH=$(echo $MATCHES | cut -d':' -f3-)
     
     if [[ $FILE != $LAST_FILE ]]; then
         OUTPUT="\n${FILE} ------------------------------------------\n\n"
